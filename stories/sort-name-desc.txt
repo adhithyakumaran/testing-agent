@@ -1,0 +1,9 @@
+As a user on saucedemo.com, I want to sort products by name Z to A
+so that I can browse products in reverse alphabetical order.
+
+Details:
+- The sort dropdown has data-test="product-sort-container"
+- Selecting "za" sorts by name Z to A
+- Product names are shown in elements with class "inventory_item_name"
+- User must be logged in first (username: standard_user, password: secret_sauce,
+  login fields: data-test="username", data-test="password", data-test="login-button")

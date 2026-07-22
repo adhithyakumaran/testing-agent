@@ -1,0 +1,6 @@
+As a user on saucedemo.com, I want to see an error message when I try to check out
+with an empty first name field, so the system prevents incomplete orders.
+
+Details: Add any item to cart, go to checkout (data-test="checkout" on cart page),
+leave firstName field (data-test="firstName") empty, fill lastName and postalCode,
+click continue (data-test="continue"). An error message should appear (data-test="error").

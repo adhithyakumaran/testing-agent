@@ -1,26 +1,45 @@
 import { generateTest } from './generator';
+import { scanPageSelectors, scanFlowSelectors } from './dom-scanner';
+import { saucedemoFlow } from './flows/saucedemo-flow';
 import * as fs from 'fs';
 
-const story = `
-As a user on saucedemo.com, I want to be able to sort products by price (low to high)
-so that I can find the cheapest items first.
+// Usage: npx tsx src/agents/generator-test.ts <output-filename> <story-file> [url-to-scan | "flow"]
+const outputName = process.argv[2];
+const storyFile = process.argv[3];
+const scanTarget = process.argv[4]; // optional: a URL, or the literal word "flow"
 
-Details:
-- The sort dropdown has data-test="product-sort-container"
-- Selecting "lohi" sorts by price low to high
-- Product prices are shown in elements with class "inventory_item_price"
-- User must be logged in first (username: standard_user, password: secret_sauce, 
-  login fields: data-test="username", data-test="password", data-test="login-button")
-`;
+if (!outputName || !storyFile) {
+  console.error('Usage: npx tsx src/agents/generator-test.ts <output-filename> <story-file> [url-to-scan | "flow"]');
+  process.exit(1);
+}
 
-generateTest(story)
-  .then((code) => {
-    console.log('--- GENERATED TEST ---\n');
-    console.log(code);
-    fs.writeFileSync('tests-generated/ai-generated-sort.spec.ts', code);
-    console.log('\n--- Saved to tests-generated/ai-generated-sort.spec.ts ---');
-  })
-  .catch((err) => {
-    console.error('--- ERROR ---');
-    console.error(err);
-  });
+const story = fs.readFileSync(storyFile, 'utf-8');
+const outputPath = `tests-generated/${outputName}.spec.ts`;
+
+async function run() {
+  let selectors: string[] | undefined;
+  let startUrl: string | undefined;
+
+  if (scanTarget === 'flow') {
+    console.log('Scanning full flow (login → inventory → cart → checkout)...');
+    selectors = await scanFlowSelectors(saucedemoFlow);
+    startUrl = saucedemoFlow.startUrl;
+    console.log(`Found ${selectors.length} unique elements across the flow.\n`);
+  } else if (scanTarget) {
+    console.log(`Scanning ${scanTarget} for real selectors...`);
+    selectors = await scanPageSelectors(scanTarget);
+    startUrl = scanTarget;
+    console.log(`Found ${selectors.length} elements with data-test attributes.\n`);
+  }
+
+  const code = await generateTest(story, selectors, startUrl);
+  console.log('--- GENERATED TEST ---\n');
+  console.log(code);
+  fs.writeFileSync(outputPath, code);
+  console.log(`\n--- Saved to ${outputPath} ---`);
+}
+
+run().catch((err) => {
+  console.error('--- ERROR ---');
+  console.error(err);
+});

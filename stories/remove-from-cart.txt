@@ -1,0 +1,2 @@
+As a user on saucedemo.com, I want to be able to remove an item from my cart
+so that I don't have to purchase items I've changed my mind about.
