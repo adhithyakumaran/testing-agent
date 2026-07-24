@@ -1,3 +1,16 @@
+CREATE TABLE IF NOT EXISTS healing_events (
+  id SERIAL PRIMARY KEY,
+  test_case_id INTEGER REFERENCES test_cases(id),
+  old_selector TEXT NOT NULL,
+  new_selector TEXT,
+  confidence TEXT, -- 'high', 'medium', 'low'
+  reasoning TEXT,
+  approved BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+
+
 CREATE TABLE IF NOT EXISTS test_cases (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -6,6 +19,7 @@ CREATE TABLE IF NOT EXISTS test_cases (
   generated_by TEXT, -- 'human' or 'ai:groq' or 'ai:anthropic'
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 CREATE TABLE IF NOT EXISTS test_runs (
   id SERIAL PRIMARY KEY,
