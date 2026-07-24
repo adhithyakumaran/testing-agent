@@ -36,3 +36,14 @@
 - Precision so far: 2/4 tests correct on first attempt (50%) across all stories tested
 - Implication: the coverage-planning agent (later sprint) or your own review process needs to
   enforce that generated tests always come with real selectors, not vague descriptions
+
+
+
+  ![alt text](image.png)--screent shot of the progress
+
+
+  ## Sprint 3 (start) — Metrics infrastructure — 24 July 2026
+- Postgres-backed test run history live: 9 test cases, 54 total runs tracked
+- Overall pass rate: 100% (54/54)
+- Mix: 5 human-written baseline tests, 3 AI-generated (Groq) — all passing equally
+- Per-test duration tracking now available for trend analysis over time
