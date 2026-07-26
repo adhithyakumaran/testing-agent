@@ -1,0 +1,1 @@
+As a user on saucedemo, I want to see an error message when I enter an invalid postal code during checkout so that I can correct my input

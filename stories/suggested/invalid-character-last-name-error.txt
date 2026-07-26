@@ -1,0 +1,1 @@
+As a user on saucedemo, I want to see an error message when I enter a last name containing invalid characters during checkout so that I can correct my input

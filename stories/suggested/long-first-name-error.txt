@@ -1,0 +1,1 @@
+As a user on saucedemo, I want to see an error message when I enter a very long first name during checkout so that I can be informed of the input limits

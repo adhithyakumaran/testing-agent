@@ -13,4 +13,15 @@ export const saucedemoFlow: ScanConfig = {
     { action: 'click', selector: '[data-test="checkout"]' },
     { action: 'waitForURL', urlPattern: /checkout-step-one.html/ },
   ],
+  branches: [
+    // Checkout validation error: submit with firstName empty, to genuinely
+    // ground the real error element (tag + data-test + text), instead of
+    // letting the LLM guess it from memory.
+    [
+      { action: 'fill', selector: '[data-test="firstName"]', value: '' },
+      { action: 'fill', selector: '[data-test="lastName"]', value: 'Test' },
+      { action: 'fill', selector: '[data-test="postalCode"]', value: '12345' },
+      { action: 'click', selector: '[data-test="continue"]' },
+    ],
+  ],
 };

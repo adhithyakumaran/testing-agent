@@ -1,0 +1,1 @@
+As a user on saucedemo, I want to see an error message when I try to checkout with an empty last name so that I can be informed of the required fields

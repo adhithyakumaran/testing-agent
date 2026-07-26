@@ -47,3 +47,59 @@
 - Overall pass rate: 100% (54/54)
 - Mix: 5 human-written baseline tests, 3 AI-generated (Groq) — all passing equally
 - Per-test duration tracking now available for trend analysis over time
+
+
+
+
+## Sprint 4: Failure Triage — [DATE]
+
+**Goal:** distinguish real selector drift (fixable by the healer) from other
+failure types (assertion mismatches, unclear timeouts) that the healer should
+never attempt to "fix."
+
+### What was built
+- `classifyFailure()` — pattern-matches Playwright error text first (free,
+  instant, deterministic); falls back to an LLM classification call only when
+  the error shape is genuinely ambiguous.
+- Four categories: `selector_not_found`, `assertion_mismatch`,
+  `timeout_unclear`, `other`.
+- `heal-failures.ts` now classifies every failure BEFORE deciding whether to
+  run the (expensive) DOM scan + healer step — only `selector_not_found`
+  triggers healing. Other categories are logged directly for human review,
+  with their category and reasoning attached, no wasted scan/LLM calls.
+- `healing_events` schema extended with `failure_category` and
+  `classification_reasoning` columns; `old_selector`/`new_selector` made
+  nullable to support non-selector entries.
+
+### Bugs found and fixed during this work (documented honestly, not hidden)
+1. **Healer's scan blind spot:** the healer only ever scanned the login page,
+   so any selector belonging to a later page (e.g. `checkout`, only present on
+   the cart page) always came back "NO MATCH" — not because it was genuinely
+   unfixable, but because it was never shown the right page. Fixed by scanning
+   the FULL flow (`scanFlowSelectors`) instead of a single static page.
+2. **Classifier false positive:** the first version of `classifyFailure` used
+   the literal phrase "waiting for locator" as a signal that an element was
+   never found. That phrase is actually Playwright's standard retry-log
+   header and appears in EVERY assertion call, whether the element was found
+   or not. This caused a genuine content-mismatch failure (right element,
+   wrong expected text) to be misclassified as `selector_not_found`, and the
+   healer then "fixed" a selector that was never broken. Corrected by using
+   the presence of "locator resolved to..." (proof the element WAS found) as
+   the real signal, instead of the generic retry-log phrase.
+
+### Verified end-to-end (real test runs, not simulated)
+- Real selector rename (`checkout` → `checkout-x`) → correctly classified
+  `selector_not_found`, healer correctly proposed `button[data-test="checkout"]`
+  at high confidence.
+- Real content mismatch (correct selector, wrong expected text) → correctly
+  classified `assertion_mismatch`, healer was NOT invoked, logged for human
+  review instead.
+
+### Known limitations, not yet addressed
+- The healer's flow scan is hardcoded to a single client app (`saucedemo`).
+  Once a second client app is onboarded, `heal-failures.ts` needs a way to
+  know which app a given failing test belongs to (e.g. store the app name on
+  `test_cases` at generation time).
+- Triage only distinguishes selector vs. non-selector failures. It does not
+  yet detect flakiness (i.e. re-running a failed test to see if it passes on
+  retry before assuming it's a real, persistent failure).
