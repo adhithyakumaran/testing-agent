@@ -90,7 +90,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation outside the JSO
 
   const userPrompt = `Classify this Playwright error:\n\n${stripAnsi(errorMessage)}`;
 
-  const raw = await askLLM(systemPrompt, userPrompt);
+  const raw = await askLLM(systemPrompt, userPrompt, 'classifier');
   const clean = raw.replace(/```json|```/g, '').trim();
 
   try {

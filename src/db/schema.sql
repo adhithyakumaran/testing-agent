@@ -42,3 +42,16 @@ CREATE TABLE IF NOT EXISTS failures (
   trace_path TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+
+CREATE TABLE IF NOT EXISTS llm_calls (
+  id SERIAL PRIMARY KEY,
+  provider TEXT NOT NULL,
+  model TEXT NOT NULL,
+  caller TEXT, -- which agent made the call, e.g. 'generator', 'classifier', 'healer'
+  input_tokens INTEGER,
+  output_tokens INTEGER,
+  success BOOLEAN NOT NULL,
+  error_message TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);

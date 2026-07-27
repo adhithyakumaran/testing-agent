@@ -38,7 +38,7 @@ export async function healSelector(
 Current real selectors on the page:
 ${currentPageSelectors.join('\n')}`;
 
-  const raw = await askLLM(HEALER_SYSTEM_PROMPT, userPrompt);
+ const raw = await askLLM(HEALER_SYSTEM_PROMPT, userPrompt, 'healer');
 
   try {
     let cleaned = raw.trim()

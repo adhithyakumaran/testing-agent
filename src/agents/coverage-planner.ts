@@ -60,7 +60,7 @@ async function run() {
   }`;
 
   console.log('Asking the LLM to propose coverage gaps...\n');
-  const raw = await askLLM(SYSTEM_PROMPT, userPrompt);
+  const raw = await askLLM(SYSTEM_PROMPT, userPrompt, 'coverage-planner');
   const clean = raw.replace(/```json|```/g, '').trim();
 
   let parsed: { suggestions: { title: string; story: string }[] };

@@ -35,6 +35,6 @@ export async function generateTest(
 
   const userPrompt = `Write a Playwright test for this user story:\n\n${userStory}${selectorBlock}${urlBlock}${prerequisiteBlock}`;
 
-  const result = await askLLM(SYSTEM_PROMPT, userPrompt);
+ const result = await askLLM(SYSTEM_PROMPT, userPrompt, 'generator');
   return result;
 }
