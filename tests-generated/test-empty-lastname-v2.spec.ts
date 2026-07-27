@@ -8,7 +8,7 @@ test('should display error message when checking out with empty last name', asyn
   await page.waitForURL(/inventory\.html/);
   await page.locator('[data-test="shopping-cart-link"]').click();
   await page.locator('[data-test="checkout"]').click();
-  await page.locator('input[data-test="firstName"]').fill('Test');
+  await page.locator('input[data-test="firstName-broken"]').fill('Test');
   await page.locator('[data-test="postalCode"]').fill('12345');
   await page.locator('[data-test="continue"]').click();
   await expect(page.locator('[data-test="error"]')).toContainText('Error: Last Name is required');
