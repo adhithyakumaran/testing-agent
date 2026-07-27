@@ -15,3 +15,10 @@
       fixes actually approved without edits) — future trust metric
 
 <!-- Add more entries here as they're identified in later phases -->
+## Phase 4-prep — Neon/CI wiring
+- [ ] No retry around ingest-results.ts's DB connection in CI — if Neon has a transient
+      blip during a CI run, ingestion silently fails with no retry
+- [ ] failures table not yet proven populated from a REAL CI failure (only proven
+      locally before the Neon migration) — needs one deliberate test
+- [ ] No branch protection / required-check policy tied to CI status yet — red CI
+      doesn't currently block a merge
