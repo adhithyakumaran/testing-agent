@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS test_cases (
   file_path TEXT NOT NULL,
   source_story TEXT,
   generated_by TEXT, -- 'human' or 'ai:groq' or 'ai:anthropic'
+  app_name TEXT NOT NULL DEFAULT 'saucedemo',
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

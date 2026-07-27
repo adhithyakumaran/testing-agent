@@ -2,7 +2,7 @@ import { pool } from './db/client';
 
 async function checkTestCases() {
   const result = await pool.query(
-    `SELECT id, name, file_path, generated_by, created_at
+    `SELECT id, name, file_path, generated_by, app_name, created_at
      FROM test_cases
      ORDER BY id DESC
      LIMIT 5;`

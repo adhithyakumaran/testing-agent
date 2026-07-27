@@ -94,9 +94,9 @@ async function run() {
     for (const title of testTitles) {
       try {
         await pool.query(
-          `INSERT INTO test_cases (name, file_path, source_story, generated_by)
-           VALUES ($1, $2, $3, $4)`,
-          [title, fileName, story, 'ai:groq']
+          `INSERT INTO test_cases (name, file_path, source_story, generated_by, app_name)
+           VALUES ($1, $2, $3, $4, $5)`,
+          [title, fileName, story, 'ai:groq', flowConfig ? scanTarget : 'saucedemo']
         );
         console.log(`  - Registered: "${title}"`);
       } catch (err) {

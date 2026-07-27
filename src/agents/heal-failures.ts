@@ -71,12 +71,12 @@ async function healFailures() {
 
     console.log(`[${failure.testName}] Category: ${classification.category} (via ${classification.method})`);
     console.log(`Reasoning: ${classification.reasoning}`);
-
-   const tc = await pool.query(
-  'SELECT id FROM test_cases WHERE file_path = $1',
-  [failure.filePath]
-);
+const tc = await pool.query(
+      'SELECT id, app_name FROM test_cases WHERE file_path = $1',
+      [failure.filePath]
+    );
     const testCaseId = tc.rows[0]?.id || null;
+    const appName = tc.rows[0]?.app_name || DEFAULT_FLOW_NAME;
 
     if (classification.category !== 'selector_not_found') {
       console.log(`Not a selector issue — logging for human triage, skipping healer.\n`);
@@ -104,9 +104,9 @@ async function healFailures() {
     console.log(`Broken selector detected: ${brokenSelector}`);
     console.log('Scanning current page for real selectors...');
 
-    const flowConfig = flowRegistry[DEFAULT_FLOW_NAME];
+    const flowConfig = flowRegistry[appName];
     if (!flowConfig) {
-      console.error(`No flow config found for "${DEFAULT_FLOW_NAME}" — cannot scan for healing. Skipping this failure.\n`);
+      console.error(`No flow config found for "${appName}" — cannot scan for healing. Skipping this failure.\n`);
       continue;
     }
     const currentSelectors = await scanFlowSelectors(flowConfig);
