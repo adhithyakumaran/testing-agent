@@ -12,11 +12,10 @@ async function ingest() {
   let insertedRuns = 0;
 
   async function insertRun(name: string, filePath: string, result: any, browser: string) {
-    const existing = await pool.query(
-      'SELECT id FROM test_cases WHERE name = $1 AND file_path = $2',
-      [name, filePath]
+ const existing = await pool.query(
+      'SELECT id FROM test_cases WHERE file_path = $1',
+      [filePath]
     );
-
     let testCaseId: number;
     if (existing.rows.length > 0) {
       testCaseId = existing.rows[0].id;
