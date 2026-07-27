@@ -19,6 +19,16 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
+      continue-on-error: true
+      id: playwright_run
+    - name: Ingest results into Postgres (Neon)
+      if: ${{ !cancelled() }}
+      run: npx tsx src/db/ingest-results.ts
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    - name: Fail the job if tests failed
+      if: steps.playwright_run.outcome == 'failure'
+      run: exit 1
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
