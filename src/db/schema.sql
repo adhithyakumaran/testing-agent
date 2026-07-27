@@ -1,10 +1,12 @@
 CREATE TABLE IF NOT EXISTS healing_events (
   id SERIAL PRIMARY KEY,
   test_case_id INTEGER REFERENCES test_cases(id),
-  old_selector TEXT NOT NULL,
+  old_selector TEXT,
   new_selector TEXT,
   confidence TEXT, -- 'high', 'medium', 'low'
   reasoning TEXT,
+  failure_category TEXT,
+  classification_reasoning TEXT,
   approved BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now()
 );

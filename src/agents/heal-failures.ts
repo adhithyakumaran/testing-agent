@@ -72,10 +72,10 @@ async function healFailures() {
     console.log(`[${failure.testName}] Category: ${classification.category} (via ${classification.method})`);
     console.log(`Reasoning: ${classification.reasoning}`);
 
-    const tc = await pool.query(
-      'SELECT id FROM test_cases WHERE name = $1 AND file_path = $2',
-      [failure.testName, failure.filePath]
-    );
+   const tc = await pool.query(
+  'SELECT id FROM test_cases WHERE file_path = $1',
+  [failure.filePath]
+);
     const testCaseId = tc.rows[0]?.id || null;
 
     if (classification.category !== 'selector_not_found') {
