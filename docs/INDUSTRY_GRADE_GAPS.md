@@ -49,3 +49,22 @@
 ## Phase 6 — Security review (continued)
 - [x] Rate limiting added to /login (10 attempts / 15 min per IP)
 - [x] npm audit run — 0 known vulnerabilities across all dependencies (28 July 2026)
+
+## Phase 6 — Security review (SUMMARY — completed 28 July 2026)
+Reviewed and verified:
+- [x] SQL injection: all queries parameterized, no string concatenation found
+- [x] Prompt injection: scanned DOM content now sanitized before reaching LLM prompts
+- [x] Dashboard authentication: session-based login with branded page, 8hr session expiry
+- [x] Rate limiting on /login: 10 attempts / 15 min per IP
+- [x] npm audit: 0 known vulnerabilities
+- [x] CI secrets: confirmed DATABASE_URL never appears in GitHub Actions logs (masked correctly)
+- [x] CI/local environment parity: DATABASE_URL secret updated to match local .env SSL config
+
+Deliberately deferred (not urgent, documented for future work):
+- [ ] HTTPS enforcement — not applicable on localhost; must be confirmed when deployed
+      (most hosting platforms provide this automatically, needs verification not code)
+- [ ] Single shared session secret — fine for one admin user; would need real user
+      accounts/roles for multi-user access levels
+- [ ] No formal third-party security audit/certification (SOC 2, pen test, etc.) — this
+      review is an honest internal pass, not a substitute for formal certification if a
+      client ever requires one
