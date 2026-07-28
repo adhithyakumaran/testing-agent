@@ -30,3 +30,18 @@
 - [ ] No date-range or per-app filtering (matters once multiple client apps exist)
 - [ ] Generic "Failed to load X" error states — no distinction between network/DB/server errors
 - [ ] Not deployed anywhere — only runs locally via manual npx tsx command, no process manager
+
+## Phase 6 — Security review (in progress)
+- [x] SQL injection surface checked — all queries use parameterized placeholders, verified no
+      string concatenation into SQL anywhere in the codebase
+- [x] Prompt injection surface found and fixed — scanned DOM content (data-test attrs, text)
+      now sanitized in dom-scanner.ts before reaching LLM prompts
+- [x] Dashboard authentication added — session-based login (was previously no auth, then
+      Basic Auth, now a proper branded session-based login page)
+- [ ] Session secret currently a single shared value in .env — fine for one admin user,
+      would need real user accounts/roles if multiple people need different access levels
+- [ ] No rate limiting on /login — vulnerable to brute-force password guessing
+- [ ] No HTTPS enforced — fine on localhost, must be added before any real deployment
+- [ ] CI secrets (DATABASE_URL) — confirmed stored as GitHub Actions secret, not yet verified
+      it never appears in any workflow log output
+- [ ] npm audit not yet run — dependency vulnerability check still pending
