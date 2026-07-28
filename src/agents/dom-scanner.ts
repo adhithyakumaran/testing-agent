@@ -23,17 +23,36 @@ export interface ScanConfig {
   branches?: FlowStep[][];
 }
 
+// Sanitizes untrusted content scanned from a live web page before it is ever
+// assembled into a string that gets sent to an LLM prompt. Scanned page
+// content (data-test attribute values, visible text) originates from a
+// third-party site we don't control, so it's treated as untrusted input —
+// not as safe metadata. This strips quotes, backticks, newlines, and any
+// non-alphanumeric/basic-punctuation characters that could otherwise be used
+// to break out of the prompt's string context or inject fake instructions.
+function sanitize(value: string, maxLen: number): string {
+  return value
+    .replace(/[^\w\s\-.,!?()]/g, '')
+    .slice(0, maxLen)
+    .trim();
+}
+
 async function extractSelectors(page: Page): Promise<string[]> {
-  const selectors = await page.evaluate(() => {
+  const rawSelectors = await page.evaluate(() => {
     const elements = Array.from(document.querySelectorAll('[data-test]'));
     return elements.map((el) => {
       const tag = el.tagName.toLowerCase();
-      const dataTest = el.getAttribute('data-test');
+      const dataTest = el.getAttribute('data-test') || '';
       const text = el.textContent?.trim().slice(0, 30) || '';
-      return `${tag}[data-test="${dataTest}"] — text: "${text}"`;
+      return { tag, dataTest, text };
     });
   });
-  return selectors;
+
+  return rawSelectors.map(({ tag, dataTest, text }) => {
+    const safeDataTest = sanitize(dataTest, 60);
+    const safeText = sanitize(text, 30);
+    return `${tag}[data-test="${safeDataTest}"] — text: "${safeText}"`;
+  });
 }
 
 async function runStepsCapturing(page: Page, steps: FlowStep[], allSelectors: string[]): Promise<void> {
