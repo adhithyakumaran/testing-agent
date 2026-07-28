@@ -20,7 +20,7 @@ function stripAnsi(text: string): string {
 // Fast, deterministic, free: try to classify from well-known Playwright error
 // text shapes BEFORE spending an LLM call. Returns null if the shape is
 // ambiguous or doesn't match anything recognized, so the caller can fall back.
-function classifyByPattern(errorMessage: string): ClassificationResult | null {
+export function classifyByPattern(errorMessage: string): ClassificationResult | null {
   const text = stripAnsi(errorMessage);
 
   // "expect(locator).toXXX failed" is Playwright's assertion-failure signature.
