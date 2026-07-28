@@ -45,3 +45,7 @@
 - [ ] CI secrets (DATABASE_URL) — confirmed stored as GitHub Actions secret, not yet verified
       it never appears in any workflow log output
 - [ ] npm audit not yet run — dependency vulnerability check still pending
+
+## Phase 6 — Security review (continued)
+- [x] Rate limiting added to /login (10 attempts / 15 min per IP)
+- [x] npm audit run — 0 known vulnerabilities across all dependencies (28 July 2026)
