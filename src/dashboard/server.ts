@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { pool } from '../db/client';
 
@@ -31,13 +32,21 @@ declare module 'express-session' {
   }
 }
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per IP per window
+  message: 'Too many login attempts. Please try again in 15 minutes.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // --- Login page (public, no auth required) ---
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// --- Login submission ---
-app.post('/login', (req, res) => {
+// --- Login submission (rate limited) ---
+app.post('/login', loginLimiter, (req, res) => {
   const { username, password } = req.body;
   const expectedUsername = process.env.DASHBOARD_USERNAME;
   const expectedPassword = process.env.DASHBOARD_PASSWORD;
