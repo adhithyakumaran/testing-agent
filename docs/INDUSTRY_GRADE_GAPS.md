@@ -22,3 +22,11 @@
       locally before the Neon migration) — needs one deliberate test
 - [ ] No branch protection / required-check policy tied to CI status yet — red CI
       doesn't currently block a merge
+
+## Phase 4 — Dashboard
+- [ ] No authentication — anyone reaching the server sees all data including costs/errors
+- [ ] No pagination on any table — LIMIT 50 with no way to see older records
+- [ ] Auto-refresh polls every 30s even when tab isn't visible/focused
+- [ ] No date-range or per-app filtering (matters once multiple client apps exist)
+- [ ] Generic "Failed to load X" error states — no distinction between network/DB/server errors
+- [ ] Not deployed anywhere — only runs locally via manual npx tsx command, no process manager
