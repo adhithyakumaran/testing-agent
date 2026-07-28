@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Testing Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #0A0A0A;
+    --muted: #6B7280;
+    --line: #E5E7EB;
+    --red: #B91C1C;
+    --red-bg: #FEF2F2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: #FFFFFF;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-box {
+    width: 100%;
+    max-width: 360px;
+    padding: 40px 32px;
+    border: 2px solid var(--text);
+  }
+  .brand {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand .name {
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .brand .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Roboto Mono', monospace;
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: 'Roboto Mono', monospace;
+    border: 1px solid var(--line);
+    margin-bottom: 20px;
+    background: #FAFAFA;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--text);
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--text);
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover { background: #2A2A2A; }
+  .error-banner {
+    background: var(--red-bg);
+    color: var(--red);
+    font-size: 12px;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--red);
+  }
+</style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="brand">
+      <div class="name">Testing Agent</div>
+      <div class="sub">saucedemo · ops console</div>
+    </div>
+    <div id="error-banner" class="error-banner" style="display:none;">Invalid username or password.</div>
+    <form method="POST" action="/login">
+     <label for="username">Username</label>
+      <input id="username" type="text" name="username" autocomplete="username" required autofocus>
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
+  <script>
+    if (window.location.search.includes('error=1')) {
+      document.getElementById('error-banner').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

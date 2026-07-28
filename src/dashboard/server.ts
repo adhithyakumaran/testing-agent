@@ -1,16 +1,79 @@
 import 'dotenv/config';
 import express from 'express';
+import session from 'express-session';
 import path from 'path';
 import { pool } from '../db/client';
 
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 4000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: process.env.DASHBOARD_SESSION_SECRET || 'insecure-default-change-me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 8 * 60 * 60 * 1000, // 8 hours
+    httpOnly: true,
+    sameSite: 'lax',
+  },
+}));
 
 function stripAnsi(text: string): string {
   return text ? text.replace(/\u001b\[[0-9;]*m/g, '') : text;
 }
+
+declare module 'express-session' {
+  interface SessionData {
+    authenticated: boolean;
+  }
+}
+
+// --- Login page (public, no auth required) ---
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// --- Login submission ---
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const expectedUsername = process.env.DASHBOARD_USERNAME;
+  const expectedPassword = process.env.DASHBOARD_PASSWORD;
+
+  if (!expectedUsername || !expectedPassword) {
+    return res.status(500).send('Dashboard auth is not configured on the server.');
+  }
+
+  if (username === expectedUsername && password === expectedPassword) {
+    req.session.authenticated = true;
+    return res.redirect('/');
+  }
+
+  return res.redirect('/login?error=1');
+});
+
+// --- Logout ---
+app.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
+});
+
+// --- Auth guard for everything else ---
+function requireAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (req.session && req.session.authenticated) {
+    return next();
+  }
+  if (req.path.startsWith('/api/')) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  return res.redirect('/login');
+}
+
+app.use(requireAuth);
+app.use(express.static(path.join(__dirname, 'public')));
 
 // --- API: Overview / pipeline stage counts ---
 app.get('/api/overview', async (req, res) => {
